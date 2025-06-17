@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Dimensions } from 'react-native';
 import WelcomePageMobile from './pages/common/WelcomePageMobile';
 import LoginPage from './pages/auth/LoginPage';
+import RegistrationPage from './pages/auth/RegistrationPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,7 @@ export default function NavigationManager() {
             <Stack.Navigator initialRouteName={initialRoute}>
                 <Stack.Screen name="Welcome" component={WelcomePageMobile} options={{ headerShown: false }}/>
                 <Stack.Screen name="Login" component={LoginPage} options={{ headerShown: false }}/>
+                <Stack.Screen name="Register" component={RegistrationPage} options={{ headerShown: false }}/>
             </Stack.Navigator>
         </NavigationContainer>
     );

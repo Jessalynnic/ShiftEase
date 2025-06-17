@@ -90,7 +90,7 @@ export default function LoginPage() {
                 </TouchableOpacity>
 
                 {/* Register Here */}
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Register')}>
                     <Text style = {styles.registerText}>Register Here!</Text>
                 </TouchableOpacity>
 
