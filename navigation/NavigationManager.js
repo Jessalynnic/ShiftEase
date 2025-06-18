@@ -1,4 +1,5 @@
 import React, { use, useEffect, useState } from 'react';
+import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuth } from '../context/AuthContext';
@@ -17,6 +18,14 @@ export default function NavigationManager() {
     //     console.log('Session changed:', session);
     // }, [session]);
 
+    if (loading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text>Loading...</Text>
+            </View>
+        );
+    }
+
     return (
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -32,5 +41,4 @@ export default function NavigationManager() {
             </Stack.Navigator>
         </NavigationContainer>
     );
-
 };

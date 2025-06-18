@@ -114,8 +114,8 @@ const styles = StyleSheet.create({
         zIndex: 1000,
     },
     desktopLogo: {
-        width: 230,
-        height: 230,
+        width: 200,
+        height: 200,
         marginTop: 17,
     },
     spacer: {
