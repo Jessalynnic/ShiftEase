@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Image, View, StyleSheet, Text, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../context/AuthContext';
 import { logout } from '../backend/scripts/logout';
 
 const { width } = Dimensions.get('window');
@@ -10,6 +11,10 @@ export default function NavBar({ homeRoute, showLogout }) {
     const navigation = useNavigation();
     const [notifications, setNotifications] = useState([]);
     const [showNotifications, setShowNotifications] = useState(false);
+
+    const { business: loggedInBusiness } = useAuth();
+
+    // console.log('Logged in business: ', loggedInBusiness);
 
     return (
         <LinearGradient
@@ -31,9 +36,11 @@ export default function NavBar({ homeRoute, showLogout }) {
                 </TouchableOpacity>
 
                 {/* Settings Button */}
-                <TouchableOpacity>
-                    <Text style={styles.navText}>Settings</Text>
-                </TouchableOpacity>
+                {loggedInBusiness && (
+                    <TouchableOpacity>
+                        <Text style={styles.navText}>Settings</Text>
+                    </TouchableOpacity>
+                )}
 
                 {/* Account Button */}
                 <TouchableOpacity>
@@ -81,7 +88,12 @@ export default function NavBar({ homeRoute, showLogout }) {
                 
                 {/* Logout Button */}
                 {showLogout && (
-                    <TouchableOpacity style={styles.logOutButton} onPress={logout}>
+                    <TouchableOpacity 
+                        style={styles.logOutButton} 
+                        onPress={async () => {
+                            await logout();
+                        }}
+                    >
                         <Text style={styles.buttonText}>Log Out</Text>
                     </TouchableOpacity>
                 )}

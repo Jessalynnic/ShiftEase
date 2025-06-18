@@ -1,7 +1,28 @@
-import { createClient } from "@supabase/supabase-js";
-//import 'react-native-url-polyfill/auto';
+import { createClient } from '@supabase/supabase-js';
+import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_KEY;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+let supabase;
+
+if (Platform.OS === 'web') {
+  supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: false,
+    },
+  });
+} else {
+  supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      storage: AsyncStorage,
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+  });
+}
+
+export { supabase };

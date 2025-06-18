@@ -3,7 +3,6 @@ import { ScrollView, Image, View, Text, TextInput, TouchableOpacity, StyleSheet,
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import NavBar from '../../components/NavBar';
-import { logout } from '../../backend/scripts/logout';
 
 const { width } = Dimensions.get('window');
 
@@ -27,9 +26,6 @@ export default function BusinessPage() {
                         {isManagerDashboard ? 'Manager Dashboard' : 'Business Dashboard'}
                     </Text>
                 </View>
-                {/* <TouchableOpacity onPress={logout} style={styles.logoutButton}>
-                    <Text style={styles.logoutText}>Logout</Text>
-                </TouchableOpacity> */}
             </View>
         </ScrollView>
     );
