@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ScrollView, Image, View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, Platform,} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import NavBar from '../../components/NavBar';
 import { logout } from '../../backend/scripts/logout';
 
 const { width } = Dimensions.get('window');
@@ -17,7 +18,7 @@ export default function BusinessPage() {
             showsHorizontalScrollIndicator={false}
         >
             <View style={styles.container}>
-                {/* <NavBar homeRoute={'Business'} showLogout={true}/> */}
+                <NavBar homeRoute={'Business'} showLogout={true}/>
 
                 <View style={styles.topContainer}>
 
@@ -26,9 +27,9 @@ export default function BusinessPage() {
                         {isManagerDashboard ? 'Manager Dashboard' : 'Business Dashboard'}
                     </Text>
                 </View>
-                <TouchableOpacity onPress={logout} style={styles.logoutButton}>
+                {/* <TouchableOpacity onPress={logout} style={styles.logoutButton}>
                     <Text style={styles.logoutText}>Logout</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
         </ScrollView>
     );
