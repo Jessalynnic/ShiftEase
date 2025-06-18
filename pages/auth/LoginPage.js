@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Dimensions, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import CommonLayout from '../common/CommonLayout';
 import { Ionicons } from '@expo/vector-icons';
+import { loginBusiness } from '../../backend/scripts/login';
 
 const { width } = Dimensions.get('window');
 
@@ -11,11 +12,36 @@ export default function LoginPage() {
     const navigation = useNavigation();
     const [isBusinessLogin, setIsBusinessLogin] = useState(false);
 
+    const [businessEmail, setBusinessEmail] = useState('');
+    const [employeeId, setEmployeeId] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+
     const switchLogin = (loginType) => {
         setIsBusinessLogin(loginType === 'Business'); // Toggle between Business and Employee Login
     };
 
     const [showPassword, setShowPassword] = useState(false);
+
+    const handleLogin = async () => {
+        setLoading(true);
+        setError(null);
+
+        if (isBusinessLogin) {
+            const { success, message } = await loginBusiness(businessEmail, password);
+
+            if (!success) {
+                setError(message);
+            } else {
+                navigation.navigate('Business');
+            }
+        } else {
+            setError('Employee login not implemented yet.');
+        }
+
+        setLoading(false);
+    }
 
     return (
         <KeyboardAvoidingView
@@ -24,7 +50,7 @@ export default function LoginPage() {
             enabled={isMobile}
         >
             <CommonLayout
-                isMobile={isMobile} // Pass the isMobile prop to CommonLayout
+                isMobile={isMobile}
                 logo={require('../../assets/images/auth/logo_1.png')}
                 mainImage={require('../../assets/images/auth/two_women.jpg')}
                 customStyles={{
@@ -47,15 +73,15 @@ export default function LoginPage() {
 
                 {/* Label for the TextInput */}
                 <Text style={styles.label}>
-                    {isBusinessLogin ? 'Business ID:' : 'Employee ID:'}
+                    {isBusinessLogin ? 'Business Email:' : 'Employee ID:'}
                 </Text>
 
                 {/* Directly render TextInput components */}
                 <TextInput
-                    placeholder={isBusinessLogin ? 'Enter Business ID' : ' Enter Employee ID'}
+                    placeholder={isBusinessLogin ? 'Enter Business Email' : ' Enter Employee ID'}
                     placeholderTextColor={isMobile ? 'gray' : 'lightgray'}
-                    value={""}
-                    onChangeText={""}
+                    value={isBusinessLogin ? businessEmail : employeeId}
+                    onChangeText={isBusinessLogin ? setBusinessEmail : setEmployeeId}
                     style={styles.input}
                 />
 
@@ -73,8 +99,8 @@ export default function LoginPage() {
                 <TextInput
                     placeholder="Enter your password"
                     placeholderTextColor={isMobile ? 'gray' : 'lightgray'}
-                    value={""}
-                    onChangeText={""}
+                    value={password}
+                    onChangeText={setPassword}
                     secureTextEntry = {!showPassword}
                     style={styles.input}
                 />
@@ -85,14 +111,24 @@ export default function LoginPage() {
                 </TouchableOpacity>
 
                 {/* Login Button */}
-                <TouchableOpacity style={styles.loginButton}>
-                    <Text style={styles.buttonText}>Login</Text>
+                <TouchableOpacity 
+                    style={styles.loginButton}
+                    onPress={handleLogin} 
+                    disabled={loading}
+                >
+                    <Text style={styles.buttonText}>
+                        {loading ? 'Logging in...' : 'Login'}
+                    </Text>
                 </TouchableOpacity>
 
                 {/* Register Here */}
                 <TouchableOpacity onPress={() => navigation.navigate('Register')}>
                     <Text style = {styles.registerText}>Register Here!</Text>
                 </TouchableOpacity>
+
+                {error && (
+                    <Text style={{ color: 'red', marginTop: 10 }}>{error}</Text>
+                )}
 
             </CommonLayout>
         </KeyboardAvoidingView>
@@ -108,21 +144,19 @@ const styles = StyleSheet.create({
   },
   employeeButton: {
     width: 100,
-      //backgroundColor: '#A9C9D9',
-      borderTopLeftRadius: 10,    
-      borderBottomLeftRadius: 10,
-      borderRightWidth: 1,        
-      borderRightColor: 'grey',
-      padding: 7,
-      alignItems: 'center',
+    borderTopLeftRadius: 10,    
+    borderBottomLeftRadius: 10,
+    borderRightWidth: 1,        
+    borderRightColor: 'grey',
+    padding: 7,
+    alignItems: 'center',
   },
   businessButton: {
     width: 100,
-      //backgroundColor: '#A9C9D9',
-      borderTopRightRadius: 10,    
-      borderBottomRightRadius: 10,
-      padding: 7,
-      alignItems: 'center',
+    borderTopRightRadius: 10,    
+    borderBottomRightRadius: 10,
+    padding: 7,
+    alignItems: 'center',
   },
   activeButton: {
     backgroundColor: '#A9C9D9', // Active button color
@@ -158,15 +192,6 @@ const styles = StyleSheet.create({
     right: 10, 
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  eyeIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 3,
-  },
-  showHideText: {
-    fontSize: 16,
-    color: "rgba(102, 102, 102, 1)",
   },
   loginButton: {
     borderRadius: 30,
