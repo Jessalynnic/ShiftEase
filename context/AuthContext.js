@@ -4,41 +4,57 @@ import { supabase } from "../database/supabase";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [session, setSession] = useState(null);
+  const [session, setSession] = useState(null);
+  const [business, setBusiness] = useState(null);
 
-    useEffect(() => {
-        const initAuth = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
+  useEffect(() => {
+    const initAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
 
-            // Check if session is stale (e.g., user was deleted)
-            if (session) {
-                const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (session?.user) {
+        const { data: businessData, error } = await supabase
+          .from("business")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .single();
 
-                if (!userData?.user || userError) {
-                    // Stale session: force logout
-                    await supabase.auth.signOut();
-                    setSession(null);
-                    return;
-                }
-            }
+        if (!error) {
+          setBusiness(businessData);
+        }
+      }
+    };
 
-            setSession(session);
-        };
+    initAuth();
 
-        initAuth();
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setSession(session);
 
-        const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
-        });
+      if (session?.user) {
+        const { data: businessData, error } = await supabase
+          .from("business")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .single();
 
-        return () => listener.subscription.unsubscribe();
-    }, []);
+        if (!error) {
+          setBusiness(businessData);
+        } else {
+          setBusiness(null);
+        }
+      } else {
+        setBusiness(null);
+      }
+    });
 
-    return (
-        <AuthContext.Provider value={{ session }}>
-            {children}
-        </AuthContext.Provider>
-    );
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ session, business }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => useContext(AuthContext);
