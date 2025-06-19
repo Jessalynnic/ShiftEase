@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import NavBar from '../../components/NavBar';
 import SidebarButton from '../../components/SidebarButton';
+import { logout } from '../../backend/scripts/logout';
 
 
 const { width } = Dimensions.get('window');
@@ -34,6 +35,15 @@ export default function BusinessPage() {
                 <View style={styles.dashboardContainer}>
                   {/* Left Column */}
                   <View style={styles.leftPane}>
+                    <TouchableOpacity 
+                        style={styles.logOutButton} 
+                        onPress={async () => {
+                            await logout();
+                        }}
+                    >
+                        <Text style={styles.buttonText}>Log Out</Text>
+                    </TouchableOpacity>
+
                     {/* Manage Schedule Button */}
                     <SidebarButton 
                       icon={require('../../assets/images/icons/calendar_with_gear.png')}

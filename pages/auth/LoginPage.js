@@ -34,7 +34,7 @@ export default function LoginPage() {
             if (!success) {
                 setError(message);
             } else {
-                navigation.navigate('Business');
+              navigation.navigate('Business');
             }
         } else {
             setError('Employee login not implemented yet.');
