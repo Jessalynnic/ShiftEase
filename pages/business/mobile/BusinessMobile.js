@@ -70,6 +70,89 @@ export default function BusinessMobile() {
                 />
             </View>
 
+            <View style={styles.scrollWrapper}>
+                <ScrollView 
+                    contentContainerStyle={styles.scrollViewContainer}
+                    keyboardShouldPersistTaps="handled"
+                    bounces={false}
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View style={styles.topDashContainer}>
+                        {/* Conditionally render the dashboard text based on state */}
+                        <Text style={styles.dashboardText}>
+                            {isManagerDashboard ? 'Manager Dashboard' : 'Business Dashboard'}
+                        </Text>
+
+                        <View style={styles.dashboardContainer}>
+
+                            {/* Announcements Section */}
+                            <LinearGradient
+                                colors={['#E7E7E7', '#A7CAD8']} 
+                                style={styles.gradientAnnounce}
+                            >
+                                <View style={styles.announcements}>
+                                    <View style={styles.topBar}>
+                                        <Text style={styles.sectionTitle}>Announcements</Text>
+                                
+                                        <View style={styles.spacer} />
+                                    
+                                        <Ionicons name="megaphone-outline" size={30} color="black" />
+                                    </View>
+
+                                    <View style={styles.textBox}>
+                                        <Text style={{ color: 'black' }}>No announcements right now.</Text>
+                                    </View>
+
+                                    <TouchableOpacity style={styles.addIconContainer}>
+                                        <Ionicons name="add-circle" size={50} color="black" />
+                                    </TouchableOpacity>
+                                </View>
+                            </LinearGradient>
+
+                            {/* Reports Section */}
+                            <LinearGradient
+                                colors={['#E7E7E7', '#A7CAD8']} 
+                                style={styles.gradient}
+                            >
+                                <View style={styles.reportsContainer}>
+                                    <View style={styles.topBar}>
+                                        <Text style={styles.sectionTitle}> Daily Reports</Text>
+                                        
+                                        <View style={styles.spacer} />
+                                        
+                                        <Ionicons name="document-text-outline" size={30} color="black" />
+                                    </View>
+                                    <View style={styles.textBox}>
+                                        <Text style={{ color: 'black' }}>No reports created.</Text>
+                                    </View>
+                                </View>
+                            </LinearGradient>
+
+                            {/* Performance Section */}
+                            <LinearGradient 
+                                colors={['#E7E7E7', '#A7CAD8']} 
+                                style={styles.gradient}
+                            >
+                                <View style={styles.performanceContainer}>
+                                    <View style={styles.topBar}>
+                                        <Text style={styles.sectionTitle}>Key Performance Overview</Text>
+                                        
+                                        <View style={styles.spacer} />
+
+                                        <Ionicons name="bar-chart-outline" size={30} color="black" />
+                                    </View>
+                                    <View style={styles.textBox}>
+                                        <Text style={{ color: 'black' }}>Performance data not available.</Text>
+                                    </View>
+                                </View>  
+                            </LinearGradient>
+                        </View>
+
+                        
+                    </View>
+                </ScrollView>
+            </View>
+
             {/* Bottom Menu */}
             <BottomMenu bottomMenuItems={bottomMenuItems} onPressMenuItem={handleBottomMenuPress} />
             
@@ -85,6 +168,15 @@ const styles = StyleSheet.create({
         zIndex: 20, 
         width: '100%', 
         height: 120, 
+    },
+    scrollWrapper: {
+        height: '89%',
+    },
+    scrollViewContainer: {
+        paddingVertical: 10,
+        paddingBottom: 20,
+        justifyContent: 'center',
+        gap: 20
     },
     topDashContainer: {
         paddingHorizontal: 20,
@@ -117,7 +209,7 @@ const styles = StyleSheet.create({
     },
     gradient: {
         width: '90%',
-        height: 300,
+        minHeight: 120,
         borderRadius: 10,
         marginTop: 20, 
         marginBottom: 20,
@@ -152,26 +244,14 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 16
     },
-    icon: {
-        width: 50,
-        height: 50
-    },
-    icon2: {
-        width: 40,
-        height: 40
-    },
     textBox: {
         flex: 1,
         borderRadius: 10,
-        padding: 20,
+        padding: 10,
         marginTop: 15,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 2,
-        elevation: 4,
+        alignItems: 'center',
     },
-    messagingContainer: {
+    performanceContainer: {
         borderRadius: 10,
         padding: 20,
     },
