@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, View, Text, TouchableOpacity, StyleSheet, Dimensions, Platform,} from 'react-native';
+import { ScrollView, View, Text, TouchableOpacity, StyleSheet, Dimensions, Image} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../../context/AuthContext';
 import NavBar from '../../components/NavBar';
 import SidebarButton from '../../components/SidebarButton';
-import { logout } from '../../backend/scripts/logout';
+import AddEmpModal from './AddEmpModal';
 
 
 const { width } = Dimensions.get('window');
@@ -13,7 +14,10 @@ const { width } = Dimensions.get('window');
 export default function BusinessPage() {
     const navigation = useNavigation();
     const [isManagerDashboard, setIsManagerDashboard] = useState(false);
+    const [addEmpVisible, setAddEmpVisible] = useState(false);
     const [pulledGeneralAnnouncement, setPulledGeneralAnnouncement] = useState([]);
+
+    const { business } = useAuth();
 
     return (
         <ScrollView 
@@ -35,14 +39,6 @@ export default function BusinessPage() {
                 <View style={styles.dashboardContainer}>
                   {/* Left Column */}
                   <View style={styles.leftPane}>
-                    <TouchableOpacity 
-                        style={styles.logOutButton} 
-                        onPress={async () => {
-                            await logout();
-                        }}
-                    >
-                        <Text style={styles.buttonText}>Log Out</Text>
-                    </TouchableOpacity>
 
                     {/* Manage Schedule Button */}
                     <SidebarButton 
@@ -56,7 +52,7 @@ export default function BusinessPage() {
                     <SidebarButton
                       icon={require('../../assets/images/icons/add_employee_icon.png')}
                       label="Add Employee"
-                      onPress={() => ("")} // Open the Add Employee Modal
+                      onPress={() => setAddEmpVisible(true)} // Open the Add Employee Modal
                       customContainerStyle={{ right: -10 }}
                     />
 
@@ -156,6 +152,21 @@ export default function BusinessPage() {
                     </LinearGradient>
                   </View>
                 </View>
+
+                {/* Bottom Bar with Logo */}
+                <LinearGradient colors={['#E7E7E7', '#9DCDCD']} style={styles.bottomBarContainer}>
+                  <Image 
+                    resizeMode="contain" 
+                    source={require('../../assets/images/auth/logo_1.png')} 
+                    style={styles.logo} 
+                  />
+                </LinearGradient>
+          
+                <AddEmpModal 
+                  addEmpVisible={addEmpVisible} 
+                  setAddEmpVisible={setAddEmpVisible}
+                  businessId={business?.business_id}
+                />
             </View>
         </ScrollView>
     );
@@ -180,10 +191,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 30,
   },
-  managerText: {
-    fontSize: 16,
-    paddingRight: 50
-  },
   dashboardContainer: {
     flexGrow: 1,
     width: '95%',
@@ -204,14 +211,6 @@ const styles = StyleSheet.create({
   spacer: {
     flexGrow: 2, 
     flexShrink: 1,
-  },
-  icon: {
-    width: 50,
-    height: 50
-  },
-  icon2: {
-    width: 40,
-    height: 40
   },
   topBar: {
     flexDirection: 'row',
@@ -265,11 +264,34 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     right: 10,
   },
-  addIconContainer2: {
-    position: 'absolute',
-    bottom: -150,
-    right: 10,
-    zIndex: 1,
+  announcementBox: {
+    minheight: 100,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 15,
+    marginTop: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 4,
+  },
+  announcementTitle: {
+    left: 10,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  announcementContent: {
+      left: 10,
+      fontSize: 14,
+  },
+  HDivider: {
+      borderBottomColor: 'lightgray',
+      borderBottomWidth: 2,
+      marginBottom: 10,
+      marginTop: 5,
+      width: '98%',
+      alignSelf: 'center',
   },
   sideContainer: {
     borderRadius: 10,
@@ -290,38 +312,6 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 4,
   },
-  button: {
-    backgroundColor: '#ffffff',
-    padding: 20,
-    borderRadius: 10,
-    marginVertical: 10,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    elevation: 4,
-  },
-  buttonText: {
-    fontSize: 18,
-    color: '#333',
-  },
-  messagingHeader: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  messagingBox: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    elevation: 4,
-  },
   bottomBarContainer: {
     width: '100%',
     height: 100,
@@ -329,42 +319,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
-  desktopLogo: {
+  logo: {
     position: 'relative',
     left: 40,
     width: 230,
     height: 100,
     alignSelf: 'flex-end',
   },
-  announcementBox: {
-    minheight: 100,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 15,
-    marginTop: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    elevation: 4,
-},
-announcementTitle: {
-    left: 10,
-    fontSize: 16,
-    fontWeight: '600',
-},
-announcementContent: {
-    left: 10,
-    fontSize: 14,
-},
-HDivider: {
-    borderBottomColor: 'lightgray',
-    borderBottomWidth: 2,
-    marginBottom: 10,
-    marginTop: 5,
-    width: '98%',
-    alignSelf: 'center',
-},
+  
+
 topBarIcons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
